@@ -2,6 +2,7 @@ struct Readout : TransparentWidget
 {
 	Repeater *module;
 	std::shared_ptr<Font> font;
+	std::string text_to_display;
 
 	Readout()
 	{
@@ -12,25 +13,15 @@ struct Readout : TransparentWidget
 	{
 		nvgSave(args.vg);
 
-		std::string text_to_display = "load sample";
-
-		if(module)
+		if(module->trig_input_is_connected == false)
 		{
-			if(module->any_sample_has_been_loaded == true)
-			{
-				text_to_display = "#" + std::to_string(module->selected_sample_slot + 1) + ":" + module->samples[module->selected_sample_slot].filename;
-				text_to_display.resize(30); // Truncate long text to fit in the display
-			}
-			else
-			{
-				text_to_display = "Right-click to load samples";
-			}
-
-			if(module->trig_input_is_connected == false)
-			{
-				text_to_display = "Connect a clock signal to CLK";
-			}
+			text_to_display = "Connect a clock signal to CLK";
 		}
+		else
+		{
+			text_to_display = "#" + std::to_string(module->selected_sample_slot + 1) + ":" + module->samples[module->selected_sample_slot].filename;
+			text_to_display.resize(30); // Truncate long text to fit in the display
+		}				
 
 		nvgFontSize(args.vg, 13);
 		nvgFontFaceId(args.vg, font->handle);

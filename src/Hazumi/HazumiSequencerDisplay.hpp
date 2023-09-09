@@ -131,12 +131,15 @@ struct HazumiSequencerDisplay : TransparentWidget
 
   void onButton(const event::Button &e) override
   {
+    if(e.button != GLFW_MOUSE_BUTTON_LEFT)
+      return;
+    if(!api0::windowIsShiftPressed())
+      return;
+    e.consume(this);
     if(isMouseInDrawArea(e.pos))
     {
       if(e.button == GLFW_MOUSE_BUTTON_LEFT && e.action == GLFW_PRESS)
       {
-        e.consume(this);
-
         if(this->mouse_lock == false)
         {
           this->mouse_lock = true;

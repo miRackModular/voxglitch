@@ -6,7 +6,6 @@ struct XY : Module
   unsigned int playback_index = 0;
   dsp::SchmittTrigger clkTrigger;
   dsp::SchmittTrigger reset_trigger;
-  bool tablet_mode = false;
   unsigned int voltage_range_index = 0;
 
   std::string voltage_range_names[NUMBER_OF_VOLTAGE_RANGES] = {
@@ -89,11 +88,6 @@ struct XY : Module
     json_object_set(root, "recording_memory_data", recording_memory_json_array);
     json_decref(recording_memory_json_array);
 
-    //
-    // Save tablet mode
-    //
-    json_object_set_new(root, "tablet_mode", json_integer(tablet_mode));
-
     // Save position when no clk input is hooked up
     json_object_set_new(root, "no_clk_position_x", json_real(no_clk_position.x));
     json_object_set_new(root, "no_clk_position_y", json_real(no_clk_position.y));
@@ -122,9 +116,6 @@ struct XY : Module
       }
     }
 
-    json_t* tablet_mode_json = json_object_get(root, "tablet_mode");
-    if (tablet_mode_json) tablet_mode = json_integer_value(tablet_mode_json);
-
     json_t* no_clk_position_x_json = json_object_get(root, "no_clk_position_x");
     json_t* no_clk_position_y_json = json_object_get(root, "no_clk_position_y");
 
@@ -136,6 +127,11 @@ struct XY : Module
 
     json_t* voltage_range_index_json = json_object_get(root, "voltage_range");
     if(voltage_range_index_json) voltage_range_index = json_integer_value(voltage_range_index_json);
+  }
+
+  void onReset() override
+  {
+    recording_memory.clear();
   }
 
   void process(const ProcessArgs &args) override

@@ -10,7 +10,7 @@
     "pluginUrl": "https://github.com/clone45/voxglitch",
     "manualUrl": "https://github.com/clone45/voxglitch",
     "sourceUrl": "https://github.com/clone45/voxglitch",
-    "donateUrl": "",
+    "donateUrl": "https://www.patreon.com/voxglitch",
     "changelogUrl": "",
     "modules": [
     {
@@ -24,6 +24,12 @@
         "name": "Byte Beat",
         "description": "Module that will get converted to something more interesting.",
         "tags": ["Oscillator"]
+    },
+    {
+        "slug": "digitalprogrammer",
+        "name": "Digital Programmer",
+        "description": "16 channel polyphonic programmer with built-in bank memory slots",
+        "tags": ["Utility", "Polyphonic"]
     },
     {
         "slug": "digitalsequencer",

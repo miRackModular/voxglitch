@@ -25,14 +25,6 @@ struct XYWidget : ModuleWidget
     addChild(xy_display);
   }
 
-  struct ClicklessOption : MenuItem {
-    XY *module;
-
-    void onAction(const event::Action &e) override {
-      module->tablet_mode ^= true; // flip the value
-    }
-  };
-
   struct OutputRangeValueItem : MenuItem {
     XY *module;
     int range_index = 0;
@@ -72,11 +64,6 @@ struct XYWidget : ModuleWidget
     RangeOption *range_option = createMenuItem<RangeOption>("Output Range", RIGHT_ARROW);
     range_option->module = module;
     menu->addChild(range_option);
-
-    // Tablet mode selection
-    ClicklessOption *clickless_option = createMenuItem<ClicklessOption>("Tablet Mode", CHECKMARK(module->tablet_mode));
-    clickless_option->module = module;
-    menu->addChild(clickless_option);
   }
 
 };

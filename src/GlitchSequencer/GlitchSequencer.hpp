@@ -161,6 +161,11 @@ struct GlitchSequencer : Module
     }
   }
 
+  void onReset() override
+  {
+    sequencer.initialize();
+  }
+
   void toggleTriggerGroup(int index)
   {
     if(selected_trigger_group_index == index)

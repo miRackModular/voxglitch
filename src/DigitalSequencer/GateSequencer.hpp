@@ -5,7 +5,12 @@ struct GateSequencer : Sequencer
   // constructor
   GateSequencer()
   {
-    sequence.fill(0.0);
+    initialize();
+  }
+
+  void initialize()
+  {
+    sequence.fill(0.0);    
   }
 
   bool getValue(int index)

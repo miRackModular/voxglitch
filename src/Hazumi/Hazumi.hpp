@@ -169,6 +169,11 @@ struct Hazumi : Module
     }
 	}
 
+  void onReset() override
+  {
+    hazumi_sequencer.initialize();
+  }
+
 	void process(const ProcessArgs &args) override
 	{
 

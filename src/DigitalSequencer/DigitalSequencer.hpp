@@ -17,8 +17,6 @@ struct DigitalSequencer : Module
   bool frozen = false;
   bool frozen_trigger_gate = false;
 
-  unsigned int tooltip_timer = 0;
-
 
   VoltageSequencer voltage_sequencers[NUMBER_OF_SEQUENCERS];
   VoltageSequencer *selected_voltage_sequencer;
@@ -166,14 +164,20 @@ struct DigitalSequencer : Module
     clock_ignore_on_reset = (long) (44100 / 100);
   }
 
+  void onReset() override
+  {
+    for(int sequencer_number=0; sequencer_number<NUMBER_OF_SEQUENCERS; sequencer_number++)
+    {
+      this->voltage_sequencers[sequencer_number].initialize();
+      this->gate_sequencers[sequencer_number].initialize();
+    }
+  }
+
   void onRandomize() override {
     for(int sequencer_number=0; sequencer_number<NUMBER_OF_SEQUENCERS; sequencer_number++)
     {
-      for(int i=0; i<MAX_SEQUENCER_STEPS; i++)
-      {
-        this->voltage_sequencers[sequencer_number].randomize();
-        this->gate_sequencers[sequencer_number].randomize();
-      }
+      this->voltage_sequencers[sequencer_number].randomize();
+      this->gate_sequencers[sequencer_number].randomize();
     }
 	}
 
@@ -604,7 +608,6 @@ struct DigitalSequencer : Module
     }
 
     if (clock_ignore_on_reset > 0) clock_ignore_on_reset--;
-    if (tooltip_timer > 0) tooltip_timer--;
 
     lights[SEQUENCER_1_LIGHT].setBrightness(selected_sequencer_index == 0);
     lights[SEQUENCER_2_LIGHT].setBrightness(selected_sequencer_index == 1);

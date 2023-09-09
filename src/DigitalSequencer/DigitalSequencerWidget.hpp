@@ -182,6 +182,16 @@ struct DigitalSequencerWidget : ModuleWidget
     }
   };
 
+  struct RandomizeItem : MenuItem {
+    DigitalSequencer *module;
+    int sequencer_number = 0;
+
+    void onAction(const event::Action &e) override {
+      module->voltage_sequencers[sequencer_number].randomize();
+      module->gate_sequencers[sequencer_number].randomize();
+    }
+  };
+
   struct SequencerItem : MenuItem {
     DigitalSequencer *module;
     unsigned int sequencer_number = 0;
@@ -203,6 +213,11 @@ struct DigitalSequencerWidget : ModuleWidget
       sample_and_hold_item->sequencer_number = this->sequencer_number;
       sample_and_hold_item->module = module;
       menu->addChild(sample_and_hold_item);
+
+      RandomizeItem *randomize_item = createMenuItem<RandomizeItem>("Randomize");
+      randomize_item->sequencer_number = this->sequencer_number;
+      randomize_item->module = module;
+      menu->addChild(randomize_item);
 
       return menu;
     }
@@ -230,33 +245,13 @@ struct DigitalSequencerWidget : ModuleWidget
     Menu *createChildMenu() override {
       Menu *menu = new Menu;
 
-      ResetOnNextOption *reset_on_next = createMenuItem<ResetOnNextOption>("Next clock input.", CHECKMARK(! module->legacy_reset));
+      ResetOnNextOption *reset_on_next = createMenuItem<ResetOnNextOption>("Next Clock Input", CHECKMARK(! module->legacy_reset));
       reset_on_next->module = module;
       menu->addChild(reset_on_next);
 
       ResetInstantOption *reset_instant = createMenuItem<ResetInstantOption>("Instant", CHECKMARK(module->legacy_reset));
       reset_instant->module = module;
       menu->addChild(reset_instant);
-
-      return menu;
-    }
-  };
-
-  struct QuickKeyMenu : MenuItem {
-    Menu *createChildMenu() override {
-      Menu *menu = new Menu;
-
-      menu->addChild(createMenuLabel("      f : Toggle Freeze Mode (for easy editing)"));
-      menu->addChild(createMenuLabel("      g : When frozen, press 'g' to send gate out"));
-      menu->addChild(createMenuLabel(""));
-      menu->addChild(createMenuLabel("      r : Randomize gate or voltage sequence"));
-      menu->addChild(createMenuLabel("      ↑ : Nudge up voltage for hovered step"));
-      menu->addChild(createMenuLabel("      ↓ : Nudge down voltage for hovered step"));
-      menu->addChild(createMenuLabel("      → : Shift hovered sequence to the right"));
-      menu->addChild(createMenuLabel("      ← : Shift hovered sequence to the left"));
-      menu->addChild(createMenuLabel("    1-6 : Quickly select active sequencer"));
-      menu->addChild(createMenuLabel("ctrl-c  : copy selected sequence"));
-      menu->addChild(createMenuLabel("ctrl-v  : paste selected sequence"));
 
       return menu;
     }
@@ -272,8 +267,6 @@ struct DigitalSequencerWidget : ModuleWidget
     assert(module);
 
     // Menu in development
-    menu->addChild(new MenuEntry); // For spacing only
-    menu->addChild(createMenuItem<QuickKeyMenu>("Quick Key Reference", RIGHT_ARROW));
     menu->addChild(new MenuEntry); // For spacing only
     menu->addChild(createMenuLabel("Sequencer Settings"));
 
@@ -309,62 +302,5 @@ struct DigitalSequencerWidget : ModuleWidget
 
   void step() override {
     ModuleWidget::step();
-  }
-
-  //
-  // Handler for keypresses that affect the entire module
-  //
-  void onHoverKey(const event::HoverKey &e) override
-  {
-      // Switch between seuences using the number keys 1-6
-      if (e.key >= GLFW_KEY_1 && e.key <= GLFW_KEY_6)
-      {
-
-        if(e.action == GLFW_PRESS)
-        {
-          unsigned int sequencer_number = e.key - 49;
-
-          // DEBUG(std::to_string(sequencer_number).c_str());
-          sequencer_number = clamp(sequencer_number,0,NUMBER_OF_SEQUENCERS-1);
-          module->selected_sequencer_index = sequencer_number;
-          e.consume(this);
-        }
-
-      }
-
-      if ((e.key == GLFW_KEY_F) && ((e.mods & RACK_MOD_MASK) != GLFW_MOD_CONTROL)) // F (no ctrl)
-      {
-        if(e.action == GLFW_PRESS)
-        {
-          module->frozen = ! module->frozen;
-          e.consume(this);
-        }
-      }
-
-      if ((e.key == GLFW_KEY_C) && ((e.mods & RACK_MOD_MASK) == GLFW_MOD_CONTROL)) // Control-C
-      {
-        if(e.action == GLFW_PRESS)
-        {
-          copy_sequencer_index = module->selected_sequencer_index;
-          e.consume(this);
-        }
-      }
-
-      if ((e.key == GLFW_KEY_V) && ((e.mods & RACK_MOD_MASK) == GLFW_MOD_CONTROL)) // Control-V
-      {
-        if(e.action == GLFW_PRESS)
-        {
-          if(copy_sequencer_index > -1)
-          {
-            module->copy(copy_sequencer_index, module->selected_sequencer_index);
-            e.consume(this);
-          }
-        }
-      }
-
-      ModuleWidget::onHoverKey(e);
-
-      // module->selected_voltage_sequencer->shiftRight();
-      // if((e.mods & RACK_MOD_MASK) == GLFW_MOD_SHIFT) module->selected_gate_sequencer->shiftRight();
   }
 };

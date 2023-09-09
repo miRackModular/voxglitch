@@ -2,7 +2,6 @@ struct LoadQueue
 {
   bool sample_queued_for_loading = false;
   std::string path_to_file = "";
-  std::string filename = "";
   unsigned int sample_number = 0;
 
   void queue_sample_for_loading(std::string path_to_file, unsigned int sample_number)
@@ -11,7 +10,6 @@ struct LoadQueue
     this->sample_queued_for_loading = true;
     this->path_to_file = path_to_file;
     this->sample_number = sample_number;
-    this->filename = filename;
   }
 };
 
@@ -123,8 +121,8 @@ struct GrainEngineMK2 : Module
       samples[i] = new Sample();
     }
 
-    leftExpander.producerMessage = producer_message;
-    leftExpander.consumerMessage = consumer_message;
+    // leftExpander.producerMessage = producer_message;
+    // leftExpander.consumerMessage = consumer_message;
   }
 
   ~GrainEngineMK2()
@@ -229,7 +227,7 @@ struct GrainEngineMK2 : Module
     // If there's an expander module attached, communicate with it and find
     // out if there's a new sample that needs to be loaded.
 
-    this->processExpander();
+    // this->processExpander();
 
     if(load_queue.sample_queued_for_loading)
     {
@@ -382,40 +380,40 @@ struct GrainEngineMK2 : Module
     if(selected_sample->size() > 0) draw_position = start_position / selected_sample->size();
   }
 
-  void processExpander()
-  {
-    if (leftExpander.module && leftExpander.module->model == modelGrainEngineMK2Expander)
-    {
-      // Receive message from expander
-      GrainEngineExpanderMessage *expander_message = (GrainEngineExpanderMessage *) leftExpander.producerMessage;
+  // void processExpander()
+  // {
+  //   if (leftExpander.module && leftExpander.module->model == modelGrainEngineMK2Expander)
+  //   {
+  //     // Receive message from expander
+  //     GrainEngineExpanderMessage *expander_message = (GrainEngineExpanderMessage *) leftExpander.producerMessage;
 
-      if(expander_message->message_received == false)
-      {
-        // Retrieve the path name
-        std::string filename = expander_message->filename;
-        std::string path = expander_message->path;
+  //     if(expander_message->message_received == false)
+  //     {
+  //       // Retrieve the path name
+  //       std::string filename = expander_message->filename;
+  //       std::string path = expander_message->path;
 
-        if(filename != "")
-        {
-          // Retrieve the sample slot
-          unsigned int sample_slot = expander_message->sample_slot;
-          sample_slot = clamp(sample_slot, 0, 4);
+  //       if(filename != "")
+  //       {
+  //         // Retrieve the sample slot
+  //         unsigned int sample_slot = expander_message->sample_slot;
+  //         sample_slot = clamp(sample_slot, 0, 4);
 
-          std::string path_to_file = path + "/" + filename;
+  //         std::string path_to_file = path + "/" + filename;
 
-          // Queue sample for loading
-          load_queue.queue_sample_for_loading(path_to_file, sample_slot);
-          fade_out_on_load.trigger();
+  //         // Queue sample for loading
+  //         load_queue.queue_sample_for_loading(path_to_file, sample_slot);
+  //         fade_out_on_load.trigger();
 
-          // DEBUG(("Queued sample for loading: " + path_to_file).c_str());
-        }
+  //         // DEBUG(("Queued sample for loading: " + path_to_file).c_str());
+  //       }
 
-        // Set the received flag so we don't process the message every single frame
-        expander_message->message_received = true;
-      }
+  //       // Set the received flag so we don't process the message every single frame
+  //       expander_message->message_received = true;
+  //     }
 
-      leftExpander.messageFlipRequested = true;
-    }
-  }
+  //     leftExpander.messageFlipRequested = true;
+  //   }
+  // }
 
 };

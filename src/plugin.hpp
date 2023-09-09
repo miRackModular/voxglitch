@@ -11,6 +11,7 @@ extern Plugin* pluginInstance;
 extern Model *modelAutobreak;
 extern Model *modelByteBeat;
 extern Model *modelDigitalSequencer;
+extern Model *modelDigitalProgrammer;
 extern Model *modelGlitchSequencer;
 extern Model *modelGhosts;
 extern Model *modelGoblins;

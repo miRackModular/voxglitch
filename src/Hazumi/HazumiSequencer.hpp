@@ -1,24 +1,37 @@
 struct HazumiSequencer
 {
-  unsigned int trigger_options[SEQUENCER_COLUMNS] = {0,0,0,0,0,0,0,0};
+  unsigned int trigger_options[SEQUENCER_COLUMNS];
 
   // Start the balls at the bottom
-  unsigned int ball_locations[8] = { 0,0,0,0,0,0,0,0 };
+  unsigned int ball_locations[SEQUENCER_COLUMNS];
 
-  bool ball_directions[8] = { 1,1,1,1,1,1,1,1 }; // 0 == down, 1 == up
-  unsigned int column_heights[SEQUENCER_COLUMNS] = { 1,1,1,1,1,1,1,1 };
+  bool ball_directions[SEQUENCER_COLUMNS]; // 0 == down, 1 == up
+  unsigned int column_heights[SEQUENCER_COLUMNS];
 
   // Store the trigger results in the sequencer.  This will be used by
   // the widget to color the balls differently when they trigger an output
-  bool stored_trigger_results[SEQUENCER_COLUMNS] = { 0,0,0,0,0,0,0,0 };
+  bool stored_trigger_results[SEQUENCER_COLUMNS];
 
   // constructor
   HazumiSequencer()
   {
+    initialize();
   }
 
   // Step the sequencer and return, as separate booleans, if any of the five
   // trigger groups have been triggered.
+
+  void initialize()
+  {
+    for(int i = 0; i < SEQUENCER_COLUMNS; i++)
+    {
+      trigger_options[i] = 0;
+      ball_locations[i] = 0;
+      ball_directions[i] = 1;
+      column_heights[i] = 1;
+      stored_trigger_results[i] = 0;
+    }
+  }
 
   void step(bool *trigger_results)
   {

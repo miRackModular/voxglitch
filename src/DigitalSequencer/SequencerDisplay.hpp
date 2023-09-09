@@ -4,61 +4,6 @@ struct SequencerDisplay : TransparentWidget
   Vec drag_position;
   double bar_width = (DRAW_AREA_WIDTH / MAX_SEQUENCER_STEPS) - BAR_HORIZONTAL_PADDING;
 
-  void onDragStart(const event::DragStart &e) override
-  {
-    TransparentWidget::onDragStart(e);
-  }
-
-  void onDragEnd(const event::DragEnd &e) override
-  {
-    TransparentWidget::onDragEnd(e);
-  }
-
-
-  // Allow for changing between sequences using the number keys
-
-  void step() override {
-    TransparentWidget::step();
-  }
-
-  void onEnter(const event::Enter &e) override
-  {
-    TransparentWidget::onEnter(e);
-  }
-
-  void onLeave(const event::Leave &e) override
-  {
-    TransparentWidget::onLeave(e);
-  }
-
-  bool keypressRight(const event::HoverKey &e)
-  {
-    if(e.key == GLFW_KEY_RIGHT) e.consume(this);
-    if(e.key == GLFW_KEY_RIGHT && e.action == GLFW_PRESS) return true;
-    return false;
-  }
-
-  bool keypressLeft(const event::HoverKey &e)
-  {
-    if(e.key == GLFW_KEY_LEFT) e.consume(this);
-    if(e.key == GLFW_KEY_LEFT && e.action == GLFW_PRESS) return true;
-    return false;
-  }
-
-  bool keypressUp(const event::HoverKey &e)
-  {
-    if(e.key == GLFW_KEY_UP) e.consume(this);
-    if(e.key == GLFW_KEY_UP && e.action == GLFW_PRESS) return true;
-    return false;
-  }
-
-  bool keypressDown(const event::HoverKey &e)
-  {
-    if(e.key == GLFW_KEY_DOWN) e.consume(this);
-    if(e.key == GLFW_KEY_DOWN && e.action == GLFW_PRESS) return true;
-    return false;
-  }
-
   void drawVerticalGuildes(NVGcontext *vg, double height)
   {
     for(unsigned int i=1; i < 8; i++)

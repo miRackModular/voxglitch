@@ -12,6 +12,13 @@ struct CellularAutomatonDisplay : TransparentWidget
     box.size = Vec(DRAW_AREA_WIDTH, DRAW_AREA_HEIGHT);
   }
 
+  void step() override
+  {
+    bool shift = api0::windowIsShiftPressed();
+    if(shift && this->module->mode == PLAY_MODE) this->module->mode = EDIT_SEED_MODE;
+    else if (!shift && this->module->mode == EDIT_SEED_MODE) this->module->mode = PLAY_MODE;
+  }
+
   void draw(const DrawArgs &args) override
   {
     const auto vg = args.vg;
@@ -119,8 +126,11 @@ struct CellularAutomatonDisplay : TransparentWidget
 
   void onButton(const event::Button &e) override
   {
+    if(e.button != GLFW_MOUSE_BUTTON_LEFT)
+      return;
+    if(this->module->mode == PLAY_MODE)
+      return;
     e.consume(this);
-
     if(e.button == GLFW_MOUSE_BUTTON_LEFT && e.action == GLFW_PRESS)
     {
       if(this->mouse_lock == false)
@@ -190,23 +200,6 @@ struct CellularAutomatonDisplay : TransparentWidget
     {
       this->mouse_lock = false;
     }
-  }
-
-  void onEnter(const event::Enter &e) override
-  {
-    TransparentWidget::onEnter(e);
-    if(this->module->mode == PLAY_MODE) this->module->mode = EDIT_SEED_MODE;
-  }
-
-  void onLeave(const event::Leave &e) override
-  {
-    TransparentWidget::onLeave(e);
-    if(this->module->mode == EDIT_SEED_MODE) this->module->mode = PLAY_MODE;
-  }
-
-  void onHover(const event::Hover& e) override {
-    TransparentWidget::onHover(e);
-    e.consume(this);
   }
 
   bool isMouseInDrawArea(Vec position)

@@ -1,3 +1,5 @@
+#include <deque>
+
 struct LooperWaveformDisplay : TransparentWidget
 {
   Looper *module;
@@ -36,33 +38,6 @@ struct LooperWaveformDisplay : TransparentWidget
     }
 
     nvgRestore(vg);
-  }
-
-  void onButton(const event::Button &e) override
-  {
-    if(isMouseInDrawArea(e.pos))
-    {
-      if(e.button == GLFW_MOUSE_BUTTON_LEFT && e.action == GLFW_PRESS)
-      {
-        e.consume(this);
-
-        // Open dialog box and prompt user for sample
-    		const std::string dir = module->root_dir.empty() ? "" : module->root_dir;
-    		char *path = osdialog_file(OSDIALOG_OPEN, dir.c_str(), NULL, osdialog_filters_parse("Wav:wav"));
-
-    		if (path)
-    		{
-          module->root_dir = std::string(path);
-    			module->sample_player.loadSample(std::string(path));
-          module->loaded_filename = module->sample_player.getFilename();
-    			free(path);
-
-          // Redundant and dangerous code
-          // module->sample_player.loadSample(std::string(path));
-    		}
-
-      }
-    }
   }
 
   bool isMouseInDrawArea(Vec position)

@@ -3,7 +3,7 @@ struct WavBankReadout : TransparentWidget
 	WavBank *module;
 	float text_rotation_angle = -M_PI / 2.0f;
 	std::shared_ptr<Font> font;
-	std::string text_to_display = "Right-Click to Load Samples";
+	std::string text_to_display;
 
 	WavBankReadout()
 	{
@@ -12,16 +12,13 @@ struct WavBankReadout : TransparentWidget
 
 	void draw(const DrawArgs &args) override
 	{
-		if(module)
+		if(module->samples.size() > module->selected_sample_slot)
 		{
-			text_to_display = "";
-
-			if(module->samples.size() > module->selected_sample_slot)
-			{
-				text_to_display = module->samples[module->selected_sample_slot].filename;
-				text_to_display.resize(30); // truncate long text
-			}
+			text_to_display = module->samples[module->selected_sample_slot].filename;
+			text_to_display.resize(30); // truncate long text
 		}
+		else
+			text_to_display = "No folder selected";
 
 		// Set font information
 		nvgFontSize(args.vg, 13);

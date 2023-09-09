@@ -8,6 +8,11 @@ struct VoltageSequencer : Sequencer
   // constructor
   VoltageSequencer()
   {
+    initialize();
+  }
+
+  void initialize()
+  {
     sequence.fill(0.0);
   }
 

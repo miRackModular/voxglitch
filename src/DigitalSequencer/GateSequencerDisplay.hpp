@@ -87,6 +87,10 @@ struct GateSequencerDisplay : SequencerDisplay
 
   void onButton(const event::Button &e) override
   {
+    if(e.button != GLFW_MOUSE_BUTTON_LEFT)
+      return;
+    if(!api0::windowIsShiftPressed())
+      return;
     e.consume(this);
 
     if(e.button == GLFW_MOUSE_BUTTON_LEFT && e.action == GLFW_PRESS)
@@ -139,32 +143,6 @@ struct GateSequencerDisplay : SequencerDisplay
       {
         module->selected_gate_sequencer->setValue(drag_bar_x_index, trigger_edit_value);
         old_drag_bar_x = drag_bar_x_index;
-      }
-    }
-
-  }
-
-  void onHoverKey(const event::HoverKey &e) override
-  {
-    if(keypressRight(e))
-    {
-      module->selected_gate_sequencer->shiftRight();
-      if((e.mods & RACK_MOD_MASK) == GLFW_MOD_SHIFT) module->selected_voltage_sequencer->shiftRight();
-    }
-
-    if(keypressLeft(e))
-    {
-      module->selected_gate_sequencer->shiftLeft();
-      if((e.mods & RACK_MOD_MASK) == GLFW_MOD_SHIFT) module->selected_voltage_sequencer->shiftLeft();
-    }
-
-    // Randomize sequence by hovering over and pressing 'r'
-    if(e.key == GLFW_KEY_R && e.action == GLFW_PRESS)
-    {
-      if((e.mods & RACK_MOD_MASK) != GLFW_MOD_CONTROL)
-      {
-        module->selected_gate_sequencer->randomize();
-        if((e.mods & RACK_MOD_MASK) == GLFW_MOD_SHIFT) module->selected_voltage_sequencer->randomize();
       }
     }
 
